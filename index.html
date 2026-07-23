@@ -181,6 +181,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                     'apikey': 'sb_publishable_hnzfzT4p8YBmnW2Soa9Uw_Bj-64j',
+                    'Authorization': 'Bearer sb_publishable_hnzfzT4p8YBmnW2Soa9Uw_Bj-64j',
                     'Prefer': 'return=minimal'
                 },
                 body: JSON.stringify({
@@ -196,6 +197,8 @@
             if (response.ok) {
                 this.submitted = true;
             } else {
+                const err = await response.text();
+                console.error('Supabase Error:', err);
                 alert('Error submitting booking. Please try again.');
             }
         }
