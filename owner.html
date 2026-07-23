@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SARF Tire Service - Owner Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 p-8" x-data="ownerDashboard()">
+
+    <div class="max-w-6xl mx-auto space-y-8">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+            <h1 class="text-2xl font-bold">SARF Tire Service - Owner Control Panel</h1>
+            <button @click="logout()" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg text-sm font-semibold">Logout</button>
+        </div>
+
+        <!-- Login Screen (Shown if not logged in) -->
+        <div x-show="!isLoggedIn" class="max-w-md mx-auto bg-slate-950 p-8 rounded-xl border border-slate-800 space-y-4">
+            <h2 class="text-xl font-bold">Owner Login</h2>
+            <input type="email" x-model="email" placeholder="Owner Email" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg">
+            <input type="password" x-model="password" placeholder="Password" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg">
+            <button @click="login()" class="w-full bg-amber-500 text-slate-950 font-bold p-3 rounded-lg">Sign In</button>
+        </div>
+
+        <!-- Orders Table (Shown when logged in) -->
+        <div x-show="isLoggedIn" class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-900 text-slate-400 text-sm border-b border-slate-800">
+                        <th class="p-4">Customer</th>
+                        <th class="p-4">Service</th>
+                        <th class="p-4">Date & Time</th>
+                        <th class="p-4">Status</th>
+                        <th class="p-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="order in orders" :key="order.id">
+                        <tr class="border-b border-slate-800/50 text-sm">
+                            <td class="p-4 font-semibold" x-text="order.full_name + ' (' + order.phone + ')'"></td>
+                            <td class="p-4" x-text="order.service"></td>
+                            <td class="p-4" x-text="order.service_date + ' @ ' + order.service_time"></td>
+                            <td class="p-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold" 
+                                    :class="order.status === 'pending' ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'"
+                                    x-text="order.status">
+                                </span>
+                            </td>
+                            <td class="p-4">
+                                <button x-show="order.status === 'pending'" @click="acceptOrder(order.id)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
+                                    Accept & Generate Payment Link
+                                </button>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Alpine.js Dashboard Logic -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        const _supabase = supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+
+        function ownerDashboard() {
+            return {
+                isLoggedIn: false,
+                email: '',
+                password: '',
+                orders: [],
+                async login() {
+                    const { data, error } = await _supabase.auth.signInWithPassword({ email: this.email, password: this.password });
+                    if (error) alert(error.message);
+                    else { this.isLoggedIn = true; this.fetchOrders(); }
+                },
+                async fetchOrders() {
+                    const { data } = await _supabase.from('appointments').select('*').order('created_at', { ascending: false });
+                    this.orders = data || [];
+                },
+                async acceptOrder(id) {
+                    // Here you would call your backend to generate a Stripe link and update status to 'approved'
+                    await _supabase.from('appointments').update({ status: 'approved' }).eq('id', id);
+                    this.fetchOrders();
+                    alert('Order accepted! You can now send the manual payment link to the customer via text/email.');
+                },
+                async logout() {
+                    await _supabase.auth.signOut();
+                    this.isLoggedIn = false;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

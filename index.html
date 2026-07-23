@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SARF Tire Service | Fast & Professional Tire Services</title>
+    <!-- tailwind css cdn for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- alpine.js for lightweight interactivity & booking calendar logic -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- fontawesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body id="home" class="bg-slate-900 text-slate-100 font-sans antialiased" x-data="{ mobileMenuOpen: false }">
+
+    <!-- header / navbar -->
+    <header class="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#home" class="flex items-center space-x-2 text-white hover:text-amber-400 transition cursor-pointer">
+                <i class="fa-solid fa-gauge-high text-amber-500 text-2xl"></i>
+                <span class="text-xl font-black tracking-wider uppercase">SARF <span class="text-amber-500">Tire Service</span></span>
+            </a>
+            
+            <!-- desktop nav -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#services" class="hover:text-amber-400 transition">Services</a>
+                <a href="#why-us" class="hover:text-amber-400 transition">Why Us</a>
+                <a href="#booking" class="hover:text-amber-400 transition">Book Appointment</a>
+                <a href="#contact" class="hover:text-amber-400 transition">Contact</a>
+            </nav>
+
+            <div class="hidden md:block">
+                <a href="#booking" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-lg transition shadow-lg shadow-amber-500/20">
+                    Book Now
+                </a>
+            </div>
+
+            <!-- mobile menu button -->
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-slate-300 hover:text-white focus:outline-none">
+                <i class="fa-solid fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- mobile menu dropdown -->
+        <div x-show="mobileMenuOpen" class="md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-3">
+            <a href="#services" @click="mobileMenuOpen = false" class="block py-2 hover:text-amber-400">Services</a>
+            <a href="#why-us" @click="mobileMenuOpen = false" class="block py-2 hover:text-amber-400">Why Us</a>
+            <a href="#booking" @click="mobileMenuOpen = false" class="block py-2 hover:text-amber-400">Book Appointment</a>
+            <a href="#contact" @click="mobileMenuOpen = false" class="block py-2 hover:text-amber-400">Contact</a>
+            <a href="#booking" @click="mobileMenuOpen = false" class="block text-center bg-amber-500 text-slate-950 font-bold py-2.5 rounded-lg">Book Now</a>
+        </div>
+    </header>
+
+    <!-- hero section -->
+    <section class="relative bg-gradient-to-b from-slate-950 to-slate-900 py-24 lg:py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <i class="fa-solid fa-bolt"></i> Fast 30-Minute Turnaround Available
+                </span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                    Precision Tire Care & <span class="text-amber-500">Lightning-Fast</span> Service.
+                </h1>
+                <p class="text-slate-400 text-lg max-w-xl">
+                    Welcome to SARF Tire Service. Get back on the road safely with our premium tire installation, custom nitrogen inflation, and expert balancing delivered with unmatched speed.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                    <a href="#booking" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-center px-8 py-4 rounded-xl transition shadow-xl shadow-amber-500/20">
+                        Schedule Service
+                    </a>
+                    <a href="tel:5550192834" class="border border-slate-700 hover:border-slate-500 text-white font-semibold text-center px-8 py-4 rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-phone text-amber-500"></i> Call (555) 019-2834
+                    </a>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="absolute -inset-1 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl blur-xl opacity-30"></div>
+                <div class="relative bg-slate-800 border border-slate-700 p-8 rounded-2xl shadow-2xl space-y-6">
+                    <h3 class="text-xl font-bold border-b border-slate-700 pb-4">Live Bay Availability</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-700">
+                            <span class="flex items-center gap-3"><i class="fa-solid fa-car text-amber-500"></i> Bay 1: Tire Installation</span>
+                            <span class="text-emerald-400 text-sm font-semibold bg-emerald-500/10 px-3 py-1 rounded-full">Available Now</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-700">
+                            <span class="flex items-center gap-3"><i class="fa-solid fa-car text-amber-500"></i> Bay 2: Nitrogen Inflation</span>
+                            <span class="text-amber-400 text-sm font-semibold bg-amber-500/10 px-3 py-1 rounded-full">Busy (~15m left)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- services section -->
+    <section id="services" class="py-24 bg-slate-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto space-y-4 mb-16">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Our Professional Services</h2>
+                <p class="text-slate-400">Equipped with state-of-the-art diagnostic and mounting machinery to protect your rims and vehicle.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- service 1 -->
+                <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl hover:border-amber-500/50 transition group">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 text-2xl mb-6 group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                        <i class="fa-solid fa-circle-dot"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Tire Installation</h3>
+                    <p class="text-slate-400 mb-6">Expert mounting and high-speed dynamic balancing for a smooth, vibration-free ride.</p>
+                    <span class="text-amber-400 font-bold text-sm">Price: null</span>
+                </div>
+                <!-- service 2 (replaced laser alignment with nitrogen inflation) -->
+                <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl hover:border-amber-500/50 transition group">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 text-2xl mb-6 group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                        <i class="fa-solid fa-wind"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Nitrogen Inflation</h3>
+                    <p class="text-slate-400 mb-6">High-purity nitrogen fills to maintain steady tire pressure longer and improve fuel efficiency.</p>
+                    <span class="text-amber-400 font-bold text-sm">Price: null</span>
+                </div>
+                <!-- service 3 -->
+                <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl hover:border-amber-500/50 transition group">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 text-2xl mb-6 group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Flat Repair & Rotation</h3>
+                    <p class="text-slate-400 mb-6">Quick puncture patches, tire rotations, and pressure checks to extend your tire lifespan.</p>
+                    <span class="text-amber-400 font-bold text-sm">Price: null</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- why us section / home lab style matching professional grid card styling -->
+    <section id="why-us" class="py-24 bg-slate-900 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto space-y-4 mb-16">
+                <span class="text-amber-400 font-semibold tracking-wider uppercase text-xs">The Infrastructure</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Our Home Lab Architecture</h2>
+                <p class="text-slate-400">Built with self-hosted modular systems, optimized performance metrics, and strict access control.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- lab service 1 -->
+                <div class="bg-slate-950 border border-slate-800 p-8 rounded-2xl hover:border-amber-500/50 transition group">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 text-2xl mb-6 group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Self-Hosted Workflow</h3>
+                    <p class="text-slate-400 mb-6">Running custom database schemas and private control planes locally without reliance on bloated third-party monoliths.</p>
+                    <span class="text-amber-400 font-bold text-sm">Status: Active</span>
+                </div>
+                <!-- lab service 2 -->
+                <div class="bg-slate-950 border border-slate-800 p-8 rounded-2xl hover:border-amber-500/50 transition group">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 text-2xl mb-6 group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Role-Based Access</h3>
+                    <p class="text-slate-400 mb-6">Secured endpoints with strict row-level policies ensuring only authenticated ownership can write state updates.</p>
+                    <span class="text-amber-400 font-bold text-sm">Status: Secured</span>
+                </div>
+                <!-- lab service 3 -->
+                <div class="bg-slate-950 border border-slate-800 p-8 rounded-2xl hover:border-amber-500/50 transition group">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 text-2xl mb-6 group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Low Latency Caching</h3>
+                    <p class="text-slate-400 mb-6">Static assets delivered globally over high-speed edge networks with minimal payload sizes for instant loads.</p>
+                    <span class="text-amber-400 font-bold text-sm">Status: Optimized</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- booking section -->
+    <section id="booking" class="py-24 bg-slate-900" x-data="{
+        selectedDate: '2026-07-25',
+        selectedTime: '09:00 AM',
+        times: ['08:00 AM', '09:00 AM', '10:30 AM', '12:00 PM', '01:30 PM', '03:00 PM', '04:30 PM'],
+        submitted: false
+    }">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-950 border border-slate-800 p-8 sm:p-12 rounded-2xl shadow-2xl">
+                <div class="text-center space-y-2 mb-8">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold">Book Your Service Appointment</h2>
+                    <p class="text-slate-400 text-sm">Request your service time. Once reviewed and accepted by our team, you will receive a secure payment link.</p>
+                </div>
+
+                <!-- form -->
+                <form @submit.prevent="submitted = true" class="space-y-6">
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
+                            <input type="text" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-amber-500" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
+                            <input type="tel" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-amber-500" placeholder="(555) 000-0000">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Select Service</label>
+                        <select class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-amber-500">
+                            <option>Tire Installation & Balancing (Price: null)</option>
+                            <option>Nitrogen Inflation (Price: null)</option>
+                            <option>Flat Repair & Rotation (Price: null)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Select Date</label>
+                        <input type="date" x-model="selectedDate" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-amber-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Select Available Time Slot</label>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                            <template x-for="time in times">
+                                <button type="button" 
+                                    @click="selectedTime = time"
+                                    :class="selectedTime === time ? 'bg-amber-500 text-slate-950 font-bold border-amber-500' : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500'"
+                                    class="border py-2.5 rounded-lg text-sm text-center transition"
+                                    x-text="time">
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="service_date" :value="selectedDate">
+                    <input type="hidden" name="service_time" :value="selectedTime">
+
+                    <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-4 rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Request to Owner
+                    </button>
+                </form>
+
+                <div x-show="submitted" x-cloak class="mt-6 bg-slate-900 border border-emerald-500/50 p-6 rounded-xl text-center space-y-3">
+                    <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-xl">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Appointment Request Sent Successfully!</h3>
+                    <p class="text-slate-400 text-sm">
+                        Your request for <span class="text-amber-400 font-semibold" x-text="selectedDate"></span> at <span class="text-amber-400 font-semibold" x-text="selectedTime"></span> has been logged. Once reviewed and approved, you will receive your secure online payment link.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- contact section -->
+    <section id="contact" class="py-24 bg-slate-950 border-t border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center space-y-4 mb-16">
+                <span class="text-amber-400 font-semibold tracking-wider uppercase text-xs">Get in Touch</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Contact SARF Tire Service</h2>
+                <p class="text-slate-400">Reach out directly via phone, text message, or email for immediate questions or inquiries.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- call -->
+                <a href="tel:5550192834" class="bg-slate-900 border border-slate-800 p-8 rounded-2xl hover:border-amber-500/50 transition text-center space-y-4 group">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 text-2xl mx-auto group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Call Us</h3>
+                    <p class="text-slate-400 text-sm">Speak directly with our shop technicians.</p>
+                    <span class="inline-block text-amber-400 font-bold text-sm">(555) 019-2834</span>
+                </a>
+
+                <!-- message -->
+                <a href="sms:5550192834" class="bg-slate-900 border border-slate-800 p-8 rounded-2xl hover:border-amber-500/50 transition text-center space-y-4 group">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 text-2xl mx-auto group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                        <i class="fa-solid fa-comment-sms"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Send a Message</h3>
+                    <p class="text-slate-400 text-sm">Text us anytime for quick answers.</p>
+                    <span class="inline-block text-amber-400 font-bold text-sm">Text Mobile Line</span>
+                </a>
+
+                <!-- email -->
+                <a href="mailto:support@sarftireservice.com" class="bg-slate-900 border border-slate-800 p-8 rounded-2xl hover:border-amber-500/50 transition text-center space-y-4 group">
+                    <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 text-2xl mx-auto group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Email Us</h3>
+                    <p class="text-slate-400 text-sm">Send us an email for general questions.</p>
+                    <span class="inline-block text-amber-400 font-bold text-sm">support@sarftires.com</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-slate-400 text-sm">
+            <a href="#home" class="flex items-center space-x-2 text-white hover:text-amber-400 transition cursor-pointer">
+                <i class="fa-solid fa-gauge-high text-amber-500 text-xl"></i>
+                <span class="font-bold tracking-wider uppercase">SARF Tire Service</span>
+            </a>
+            <p>&copy; 2026 SARF Tire Service Center. All rights reserved.</p>
+            <div class="flex space-x-6 text-lg">
+                <a href="#" class="hover:text-amber-400"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#" class="hover:text-amber-400"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-amber-400"><i class="fa-brands fa-yelp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
