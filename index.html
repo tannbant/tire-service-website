@@ -135,8 +135,8 @@
         async submitBooking() {
             this.loading = true;
             try {
-                if (window.saveBookingToFirebase) {
-                    await window.saveBookingToFirebase({
+                if (window.saveBookingToRealtimeDB) {
+                    await window.saveBookingToRealtimeDB({
                         fullName: this.fullName,
                         phone: this.phone,
                         service: this.service,
@@ -148,8 +148,7 @@
                 }
                 this.submitted = true;
             } catch (err) {
-                console.error('Firebase Error:', err);
-                // Fallback to success state even if network blocks so UI always proceeds
+                console.error('Realtime DB Error:', err);
                 this.submitted = true;
             } finally {
                 this.loading = false;
@@ -279,10 +278,10 @@
         </div>
     </footer>
 
-    <!-- Firebase SDK Setup -->
+    <!-- Firebase Realtime Database SDK Setup -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBinZeM4l3pJx-Ynec5I3TMWIoh859lodg",
@@ -296,14 +295,11 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const db = getDatabase(app);
 
-        window.saveBookingToFirebase = async function(bookingData) {
-            try {
-                await addDoc(collection(db, "bookings"), bookingData);
-            } catch (err) {
-                console.warn("Firestore write simulation or block:", err);
-            }
+        window.saveBookingToRealtimeDB = async function(bookingData) {
+            const bookingsRef = ref(db, "bookings");
+            await push(bookingsRef, bookingData);
         };
     </script>
 </body>
