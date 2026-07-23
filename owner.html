@@ -2,94 +2,132 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SARF Tire Service - Owner Dashboard</title>
+    <title>SARF Owner Dashboard - Secure Gateway</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 p-8" x-data="ownerDashboard()">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4" x-data="{
+    isAuthenticated: false,
+    email: '',
+    password: '',
+    error: false,
+    bookings: [],
+    login() {
+        if (this.email === 'test@gmail.com' && this.password === '8197') {
+            this.isAuthenticated = true;
+            this.error = false;
+            this.fetchBookings();
+        } else {
+            this.error = true;
+        }
+    },
+    async fetchBookings() {
+        const res = await fetch('https://falyclegmlcufifpflzm.supabase.co/rest/v1/bookings?select=*', {
+            headers: {
+                'apikey': 'YOUR_SUPABASE_ANON_KEY'
+            }
+        });
+        if (res.ok) {
+            this.bookings = await res.json();
+        }
+    },
+    async updateStatus(id, newStatus) {
+        await fetch(`https://falyclegmlcufifpflzm.supabase.co/rest/v1/bookings?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': 'YOUR_SUPABASE_ANON_KEY',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+        this.fetchBookings();
+    }
+}">
 
-    <div class="max-w-6xl mx-auto space-y-8">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-            <h1 class="text-2xl font-bold">SARF Tire Service - Owner Control Panel</h1>
-            <button @click="logout()" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg text-sm font-semibold">Logout</button>
+    <!-- LOGIN SCREEN -->
+    <div x-show="!isAuthenticated" class="w-full max-w-md bg-slate-950 border border-slate-800 p-8 rounded-2xl shadow-2xl space-y-6">
+        <div class="text-center space-y-2">
+            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mx-auto text-xl mb-4">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h1 class="text-2xl font-black">Restricted Owner Portal</h1>
+            <p class="text-slate-400 text-sm">Enter your credentials to view incoming service requests.</p>
         </div>
 
-        <!-- Login Screen (Shown if not logged in) -->
-        <div x-show="!isLoggedIn" class="max-w-md mx-auto bg-slate-950 p-8 rounded-xl border border-slate-800 space-y-4">
-            <h2 class="text-xl font-bold">Owner Login</h2>
-            <input type="email" x-model="email" placeholder="Owner Email" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg">
-            <input type="password" x-model="password" placeholder="Password" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg">
-            <button @click="login()" class="w-full bg-amber-500 text-slate-950 font-bold p-3 rounded-lg">Sign In</button>
+        <form @submit.prevent="login()" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Owner Email</label>
+                <input type="email" x-model="email" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm" placeholder="test@gmail.com">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Password</label>
+                <input type="password" x-model="password" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm" placeholder="••••••••">
+            </div>
+
+            <div x-show="error" class="text-rose-400 text-xs font-semibold bg-rose-500/10 border border-rose-500/20 p-3 rounded-lg text-center">
+                Invalid credentials. Access denied.
+            </div>
+
+            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-amber-500/20">
+                Authenticate Access
+            </button>
+        </form>
+    </div>
+
+    <!-- DASHBOARD VIEW (Visible only after successful login) -->
+    <div x-show="isAuthenticated" x-cloak class="w-full max-w-6xl mx-auto space-y-6 py-10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-950 border border-slate-800 p-6 rounded-2xl">
+            <div>
+                <h1 class="text-2xl font-black text-amber-500">SARF Owner Dashboard</h1>
+                <p class="text-slate-400 text-sm">Live management console connected to Supabase backend.</p>
+            </div>
+            <button @click="isAuthenticated = false; password = ''" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-lg text-xs font-bold transition">
+                Lock / Logout
+            </button>
         </div>
 
-        <!-- Orders Table (Shown when logged in) -->
-        <div x-show="isLoggedIn" class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-900 text-slate-400 text-sm border-b border-slate-800">
-                        <th class="p-4">Customer</th>
-                        <th class="p-4">Service</th>
-                        <th class="p-4">Date & Time</th>
-                        <th class="p-4">Status</th>
-                        <th class="p-4">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template x-for="order in orders" :key="order.id">
-                        <tr class="border-b border-slate-800/50 text-sm">
-                            <td class="p-4 font-semibold" x-text="order.full_name + ' (' + order.phone + ')'"></td>
-                            <td class="p-4" x-text="order.service"></td>
-                            <td class="p-4" x-text="order.service_date + ' @ ' + order.service_time"></td>
-                            <td class="p-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold" 
-                                    :class="order.status === 'pending' ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'"
-                                    x-text="order.status">
-                                </span>
-                            </td>
-                            <td class="p-4">
-                                <button x-show="order.status === 'pending'" @click="acceptOrder(order.id)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
-                                    Accept & Generate Payment Link
-                                </button>
-                            </td>
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 text-xs uppercase tracking-wider">
+                            <th class="p-4">Customer Name</th>
+                            <th class="p-4">Phone</th>
+                            <th class="p-4">Service</th>
+                            <th class="p-4">Date & Time</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right">Actions</th>
                         </tr>
-                    </template>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-sm">
+                        <template x-for="b in bookings" :key="b.id">
+                            <tr>
+                                <td class="p-4 font-semibold text-white" x-text="b.full_name"></td>
+                                <td class="p-4 text-slate-300" x-text="b.phone"></td>
+                                <td class="p-4 text-slate-300" x-text="b.service"></td>
+                                <td class="p-4 text-slate-300" x-text="b.service_date + ' @ ' + b.service_time"></td>
+                                <td class="p-4">
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                                        :class="b.status === 'approved' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'"
+                                        x-text="b.status"></span>
+                                </td>
+                                <td class="p-4 text-right space-x-2">
+                                    <button @click="updateStatus(b.id, 'approved')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Approve</button>
+                                    <button @click="updateStatus(b.id, 'rejected')" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-rose-400 px-3 py-1.5 rounded-lg text-xs font-bold transition">Reject</button>
+                                </td>
+                            </tr>
+                        </template>
+                        <template x-if="bookings.length === 0">
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-slate-500">No booking requests found in the database.</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Alpine.js Dashboard Logic -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script>
-        const _supabase = supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
-
-        function ownerDashboard() {
-            return {
-                isLoggedIn: false,
-                email: '',
-                password: '',
-                orders: [],
-                async login() {
-                    const { data, error } = await _supabase.auth.signInWithPassword({ email: this.email, password: this.password });
-                    if (error) alert(error.message);
-                    else { this.isLoggedIn = true; this.fetchOrders(); }
-                },
-                async fetchOrders() {
-                    const { data } = await _supabase.from('appointments').select('*').order('created_at', { ascending: false });
-                    this.orders = data || [];
-                },
-                async acceptOrder(id) {
-                    // Here you would call your backend to generate a Stripe link and update status to 'approved'
-                    await _supabase.from('appointments').update({ status: 'approved' }).eq('id', id);
-                    this.fetchOrders();
-                    alert('Order accepted! You can now send the manual payment link to the customer via text/email.');
-                },
-                async logout() {
-                    await _supabase.auth.signOut();
-                    this.isLoggedIn = false;
-                }
-            }
-        }
-    </script>
 </body>
 </html>
