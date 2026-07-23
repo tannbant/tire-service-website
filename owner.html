@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>SARF Owner Dashboard - Firebase Gateway</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase App & Realtime Database CDN Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4" 
       x-data="dashboardData()" 
@@ -31,7 +38,7 @@
                 <input type="password" x-model="password" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-sm" placeholder="••••••••">
             </div>
 
-            <div x-show="error" class="text-rose-400 text-xs font-semibold bg-rose-500/10 border border-rose-500/20 p-3 rounded-lg text-center">
+            <div x-show="error" class="text-rose-400 text-xs font-semibold bg-rose-500/10 border border-rose-500/20 p-3 rounded-lg text-center" x-cloak>
                 Invalid credentials. Access denied.
             </div>
 
@@ -100,11 +107,8 @@
         </div>
     </div>
 
-    <!-- Firebase Realtime Database & Alpine Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
+    <!-- Firebase Compatibility Script Logic -->
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBinZeM4l3pJx-Ynec5I3TMWIoh859lodg",
             authDomain: "tire-service-5e054.firebaseapp.com",
@@ -116,10 +120,11 @@
             measurementId: "G-TTDMMHJVM3"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        // Initialize Firebase Compat
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        window.dashboardData = function() {
+        function dashboardData() {
             return {
                 isAuthenticated: false,
                 email: '',
@@ -138,31 +143,32 @@
                         this.error = true;
                     }
                 },
-                async fetchBookings() {
-                    try {
-                        const snapshot = await get(ref(db, "bookings"));
-                        let list = [];
-                        if (snapshot.exists()) {
-                            snapshot.forEach((childSnapshot) => {
-                                list.push({ id: childSnapshot.key, ...childSnapshot.val() });
-                            });
-                        }
-                        this.bookings = list;
-                    } catch (err) {
-                        console.warn("Error fetching bookings:", err);
-                    }
+                fetchBookings() {
+                    db.ref('bookings').once('value')
+                        .then((snapshot) => {
+                            let list = [];
+                            if (snapshot.exists()) {
+                                snapshot.forEach((childSnapshot) => {
+                                    list.push({ id: childSnapshot.key, ...childSnapshot.val() });
+                                });
+                            }
+                            this.bookings = list;
+                        })
+                        .catch((err) => {
+                            console.warn("Error fetching bookings:", err);
+                        });
                 },
-                async updateStatus(id, newStatus) {
-                    try {
-                        const bookingRef = ref(db, "bookings/" + id);
-                        await update(bookingRef, { status: newStatus });
-                        await this.fetchBookings();
-                    } catch (err) {
-                        console.warn("Error updating status:", err);
-                    }
+                updateStatus(id, newStatus) {
+                    db.ref('bookings/' + id).update({ status: newStatus })
+                        .then(() => {
+                            this.fetchBookings();
+                        })
+                        .catch((err) => {
+                            console.warn("Error updating status:", err);
+                        });
                 }
             }
-        };
+        }
     </script>
 </body>
 </html>
