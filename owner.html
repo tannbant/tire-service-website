@@ -5,6 +5,7 @@
     <title>SARF Owner Dashboard - Secure Gateway</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4" x-data="{
     isAuthenticated: false,
@@ -24,7 +25,7 @@
     async fetchBookings() {
         const res = await fetch('https://falyclegmlcufifpflzm.supabase.co/rest/v1/bookings?select=*', {
             headers: {
-                'apikey': 'YOUR_SUPABASE_ANON_KEY'
+                'apikey': 'sb_publishable_hnzfzT4p8YBmnW2Soa9Uw_Bj-64j'
             }
         });
         if (res.ok) {
@@ -36,7 +37,7 @@
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'apikey': 'YOUR_SUPABASE_ANON_KEY',
+                'apikey': 'sb_publishable_hnzfzT4p8YBmnW2Soa9Uw_Bj-64j',
                 'Prefer': 'return=minimal'
             },
             body: JSON.stringify({ status: newStatus })
@@ -75,7 +76,7 @@
         </form>
     </div>
 
-    <!-- DASHBOARD VIEW (Visible only after successful login) -->
+    <!-- DASHBOARD VIEW -->
     <div x-show="isAuthenticated" x-cloak class="w-full max-w-6xl mx-auto space-y-6 py-10">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-950 border border-slate-800 p-6 rounded-2xl">
             <div>
