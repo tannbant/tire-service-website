@@ -7,28 +7,9 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4" x-data="{
-    isAuthenticated: false,
-    email: '',
-    password: '',
-    error: false,
-    bookings: [],
-    login() {
-        if (this.email === 'test@gmail.com' && this.password === '8197') {
-            this.isAuthenticated = true;
-            this.error = false;
-            if (window.fetchFirebaseBookings) window.fetchFirebaseBookings();
-        } else {
-            this.error = true;
-        }
-    },
-    async updateStatus(id, newStatus) {
-        if (window.updateFirebaseStatus) {
-            await window.updateFirebaseStatus(id, newStatus);
-            window.fetchFirebaseBookings();
-        }
-    }
-}">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4" 
+      x-data="dashboardData()" 
+      x-init="init()">
 
     <!-- LOGIN SCREEN -->
     <div x-show="!isAuthenticated" class="w-full max-w-md bg-slate-950 border border-slate-800 p-8 rounded-2xl shadow-2xl space-y-6">
@@ -67,9 +48,14 @@
                 <h1 class="text-2xl font-black text-amber-500">SARF Owner Dashboard</h1>
                 <p class="text-slate-400 text-sm">Live management console connected to Realtime Database.</p>
             </div>
-            <button @click="isAuthenticated = false; password = ''" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-lg text-xs font-bold transition">
-                Lock / Logout
-            </button>
+            <div class="flex items-center gap-3">
+                <button @click="fetchBookings()" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-amber-400 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate"></i> Refresh
+                </button>
+                <button @click="isAuthenticated = false; password = ''" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-4 py-2 rounded-lg text-xs font-bold transition">
+                    Lock / Logout
+                </button>
+            </div>
         </div>
 
         <div class="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
@@ -94,7 +80,7 @@
                                 <td class="p-4 text-slate-300" x-text="b.selectedDate + ' @ ' + b.selectedTime"></td>
                                 <td class="p-4">
                                     <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
-                                        :class="b.status === 'approved' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'"
+                                        :class="b.status === 'approved' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : (b.status === 'rejected' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20')"
                                         x-text="b.status"></span>
                                 </td>
                                 <td class="p-4 text-right space-x-2">
@@ -114,7 +100,7 @@
         </div>
     </div>
 
-    <!-- Firebase Realtime Database SDK Setup -->
+    <!-- Firebase Realtime Database & Alpine Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -133,29 +119,48 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        window.fetchFirebaseBookings = async function() {
-            try {
-                const snapshot = await get(ref(db, "bookings"));
-                let list = [];
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        list.push({ id: childSnapshot.key, ...childSnapshot.val() });
-                    });
+        window.dashboardData = function() {
+            return {
+                isAuthenticated: false,
+                email: '',
+                password: '',
+                error: false,
+                bookings: [],
+                init() {
+                    this.fetchBookings();
+                },
+                login() {
+                    if (this.email === 'test@gmail.com' && this.password === '8197') {
+                        this.isAuthenticated = true;
+                        this.error = false;
+                        this.fetchBookings();
+                    } else {
+                        this.error = true;
+                    }
+                },
+                async fetchBookings() {
+                    try {
+                        const snapshot = await get(ref(db, "bookings"));
+                        let list = [];
+                        if (snapshot.exists()) {
+                            snapshot.forEach((childSnapshot) => {
+                                list.push({ id: childSnapshot.key, ...childSnapshot.val() });
+                            });
+                        }
+                        this.bookings = list;
+                    } catch (err) {
+                        console.warn("Error fetching bookings:", err);
+                    }
+                },
+                async updateStatus(id, newStatus) {
+                    try {
+                        const bookingRef = ref(db, "bookings/" + id);
+                        await update(bookingRef, { status: newStatus });
+                        await this.fetchBookings();
+                    } catch (err) {
+                        console.warn("Error updating status:", err);
+                    }
                 }
-                if (document.body.__x && document.body.__x.$data) {
-                    document.body.__x.$data.bookings = list;
-                }
-            } catch (err) {
-                console.warn("Error fetching bookings:", err);
-            }
-        };
-
-        window.updateFirebaseStatus = async function(id, newStatus) {
-            try {
-                const bookingRef = ref(db, "bookings/" + id);
-                await update(bookingRef, { status: newStatus });
-            } catch (err) {
-                console.warn("Error updating status:", err);
             }
         };
     </script>
